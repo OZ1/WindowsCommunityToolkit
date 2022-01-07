@@ -2,90 +2,71 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using System;
+
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
-namespace Microsoft.Toolkit.Uwp.UI.Controls
+namespace Microsoft.Toolkit.Uwp.UI.Controls;
+
+/// <summary>
+/// RangeSelector is a "double slider" control for range values.
+/// </summary>
+public partial class RangeSelector : Control
 {
-    /// <summary>
-    /// RangeSelector is a "double slider" control for range values.
-    /// </summary>
-    public partial class RangeSelector : Control
+    private readonly DispatcherQueueTimer keyDebounceTimer = DispatcherQueue.GetForCurrentThread().CreateTimer();
+
+    private void Thumb_KeyDown(object sender, KeyRoutedEventArgs e)
     {
-        private readonly DispatcherQueueTimer keyDebounceTimer = DispatcherQueue.GetForCurrentThread().CreateTimer();
-
-        private void MinThumb_KeyDown(object sender, KeyRoutedEventArgs e)
+        switch (e.Key)
         {
-            switch (e.Key)
-            {
-                case VirtualKey.Left:
-                    RangeStart -= StepFrequency;
-                    SyncThumbs(fromMinKeyDown: true);
-                    if (_toolTip != null)
-                    {
-                        _toolTip.Visibility = Visibility.Visible;
-                    }
-
-                    e.Handled = true;
-                    break;
-                case VirtualKey.Right:
-                    RangeStart += StepFrequency;
-                    SyncThumbs(fromMinKeyDown: true);
-                    if (_toolTip != null)
-                    {
-                        _toolTip.Visibility = Visibility.Visible;
-                    }
-
-                    e.Handled = true;
-                    break;
-            }
+            case VirtualKey.Left: break;
+            case VirtualKey.Right: break;
+            case VirtualKey.Home: break;
+            case VirtualKey.End: break;
+            default: return;
         }
 
-        private void MaxThumb_KeyDown(object sender, KeyRoutedEventArgs e)
+        var thumb = Array.IndexOf(_thumbs, sender);
+        var value = GetRange(thumb);
+        switch (e.Key)
         {
-            switch (e.Key)
-            {
-                case VirtualKey.Left:
-                    RangeEnd -= StepFrequency;
-                    SyncThumbs(fromMaxKeyDown: true);
-                    if (_toolTip != null)
-                    {
-                        _toolTip.Visibility = Visibility.Visible;
-                    }
-
-                    e.Handled = true;
-                    break;
-                case VirtualKey.Right:
-                    RangeEnd += StepFrequency;
-                    SyncThumbs(fromMaxKeyDown: true);
-                    if (_toolTip != null)
-                    {
-                        _toolTip.Visibility = Visibility.Visible;
-                    }
-
-                    e.Handled = true;
-                    break;
-            }
+            case VirtualKey.Left: value -= StepFrequency; break;
+            case VirtualKey.Right: value += StepFrequency; break;
+            case VirtualKey.Home: value = Minimum; break;
+            case VirtualKey.End: value = Maximum; break;
         }
 
-        private void Thumb_KeyUp(object sender, KeyRoutedEventArgs e)
-        {
-            switch (e.Key)
-            {
-                case VirtualKey.Left:
-                case VirtualKey.Right:
-                    if (_toolTip != null)
-                    {
-                        keyDebounceTimer.Debounce(
-                            () => _toolTip.Visibility = Visibility.Collapsed,
-                            TimeToHideToolTipOnKeyUp);
-                    }
+        SetRange(thumb, value);
+        SyncThumbs(thumb);
 
-                    e.Handled = true;
-                    break;
-            }
+        if (_toolTip != null)
+        {
+            _toolTip.Visibility = Visibility.Visible;
+        }
+
+        e.Handled = true;
+    }
+
+    private void Thumb_KeyUp(object sender, KeyRoutedEventArgs e)
+    {
+        switch (e.Key)
+        {
+            case VirtualKey.Left:
+            case VirtualKey.Right:
+            case VirtualKey.Home:
+            case VirtualKey.End:
+                if (_toolTip != null)
+                {
+                    keyDebounceTimer.Debounce(
+                        () => _toolTip.Visibility = Visibility.Collapsed,
+                        TimeToHideToolTipOnKeyUp);
+                }
+
+                e.Handled = true;
+                break;
         }
     }
 }

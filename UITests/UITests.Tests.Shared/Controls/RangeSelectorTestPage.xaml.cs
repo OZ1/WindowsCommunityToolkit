@@ -37,7 +37,7 @@ namespace UITests.App.Pages
         {
             if(TryDoubleFromTextBox(inputRangeStart, out var rStart))
             {
-                rangeSelector.RangeStart = rStart;
+                rangeSelector.RangeMin = rStart;
             }
         }
 
@@ -45,7 +45,7 @@ namespace UITests.App.Pages
         {
             if(TryDoubleFromTextBox(inputRangeEnd, out var rEnd))
             {
-                rangeSelector.RangeEnd = rEnd;
+                rangeSelector.RangeMax = rEnd;
             }
         }
 
@@ -70,8 +70,8 @@ namespace UITests.App.Pages
                 rangeSelector.Minimum = min;
                 rangeSelector.Maximum = max;
                 rangeSelector.StepFrequency = sf;
-                rangeSelector.RangeStart = rStart;
-                rangeSelector.RangeEnd = rEnd;
+                rangeSelector.RangeMin = rStart;
+                rangeSelector.RangeMax = rEnd;
             }
         }
 

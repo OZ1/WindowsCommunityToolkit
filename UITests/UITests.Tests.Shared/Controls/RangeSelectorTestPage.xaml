@@ -108,12 +108,12 @@
         <TextBlock x:Name="currentRangeStart"
                    Grid.Row="6"
                    Grid.Column="4"
-                   Text="{x:Bind rangeSelector.RangeStart, Mode=OneWay}" />
+                   Text="{x:Bind rangeSelector.RangeMin, Mode=OneWay}" />
 
         <TextBlock x:Name="currentRangeEnd"
                    Grid.Row="6"
                    Grid.Column="6"
-                   Text="{x:Bind rangeSelector.RangeEnd, Mode=OneWay}" />
+                   Text="{x:Bind rangeSelector.RangeMax, Mode=OneWay}" />
 
         <TextBlock x:Name="currentMaximum"
                    Grid.Row="6"

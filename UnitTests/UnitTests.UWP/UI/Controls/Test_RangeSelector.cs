@@ -25,21 +25,21 @@ namespace UnitTests.UWP.UI.Controls
 
         // If
         // Minimum < Maximum
-        // RangeStart >= Minimum
-        // RangeStart <= Maximum
-        // RangeStart <= RangeEnd
+        // RangeMin >= Minimum
+        // RangeMin <= Maximum
+        // RangeMin <= RangeMax
         //
         // Then
-        // RangeStart does not change
+        // RangeMin does not change
 
         // If
         // Minimum < Maximum
-        // RangeEnd >= Minimum
-        // RangeEnd <= Maximum
-        // RangeEnd >= RangeStart
+        // RangeMax >= Minimum
+        // RangeMax <= Maximum
+        // RangeMax >= RangeMin
         //
         // Then
-        // RangeEnd dose not change
+        // RangeMax dose not change
         // Input:Start End   Expected:Start End
         [DataRow(    0,  100,             0,  100)]
         [DataRow(   10,   90,            10,   90)]
@@ -51,38 +51,38 @@ namespace UnitTests.UWP.UI.Controls
 
         // If
         // Minimum < Maximum
-        // RangeEnd <= Maximum
-        // RangeEnd >= Minimum
-        // RangeStart >= Minimum
-        // RangeStart >= RangeEnd
+        // RangeMax <= Maximum
+        // RangeMax >= Minimum
+        // RangeMin >= Minimum
+        // RangeMin >= RangeMax
         //
         // Then
-        // RangeStart will be RangeEnd
+        // RangeMin will be RangeMax
         [DataRow(   90,   10,            10,   10)]
         [DataRow(  110,   10,            10,   10)]
 
         // If
         // Minimum < Maximum
-        // RangeStart <= Minimum
+        // RangeMin <= Minimum
         //
         // Then
-        // RangeStart will be Minimum
+        // RangeMin will be Minimum
 
         // If
         // Minimum < Maximum
-        // RangeEnd <= Minimum
+        // RangeMax <= Minimum
         //
         // Then
-        // RangeEnd will be Minimum
+        // RangeMax will be Minimum
 
         // If
         // Minimum < Maximum
-        // RangeEnd <= Minimum
-        // RangeStart >= RangeEnd
+        // RangeMax <= Minimum
+        // RangeMin >= RangeMax
         //
         // Then
-        // RangeEnd will be Minimum
-        // RangeStart will be Minimum
+        // RangeMax will be Minimum
+        // RangeMin will be Minimum
         [DataRow(  -50,  -50,             0,    0)]
         [DataRow(  -90,   90,             0,   90)]
         [DataRow(  -90,  -10,             0,    0)]
@@ -91,19 +91,19 @@ namespace UnitTests.UWP.UI.Controls
 
         // If
         // Minimum < Maximum
-        // RangeEnd >= Maximum
+        // RangeMax >= Maximum
         //
         // Then
-        // RangeEnd will be Maximum
+        // RangeMax will be Maximum
 
         // If
         // Minimum < Maximum
-        // RangeStart >= Maximum
-        // RangeEnd >= Maximum
+        // RangeMin >= Maximum
+        // RangeMax >= Maximum
         //
         // Then
-        // RangeStart will be Maximum
-        // RangeEnd will be Maximum
+        // RangeMin will be Maximum
+        // RangeMax will be Maximum
         [DataRow( 150,  150,            100,  100)]
         [DataRow(  10,  190,             10,  100)]
         [DataRow( 110,  190,            100,  100)]
@@ -123,22 +123,22 @@ namespace UnitTests.UWP.UI.Controls
 
         // If
         // Minimum >= Maximum
-        // RangeStart > Maximum
-        // RangeEnd > Maximum
+        // RangeMin > Maximum
+        // RangeMax > Maximum
         //
         // Then
-        // RangeStart will be Maximum + 0.01
+        // RangeMin will be Maximum + 0.01
         // Else
-        // RangeStart will be Maximum
+        // RangeMin will be Maximum
 
         // If
         // Minimum >= Maximum
-        // RangeEnd > Maximum
+        // RangeMax > Maximum
         //
         // Then
-        // RangeEnd will be Maximum + 0.01
+        // RangeMax will be Maximum + 0.01
         // Else
-        // RangeEnd will be Maximum
+        // RangeMax will be Maximum
 
         // Input:Start End    Expected:Start End
         [DataRow(    0,    0,              0,    0)]
@@ -325,10 +325,10 @@ namespace UnitTests.UWP.UI.Controls
                         test.Maximum = propInput;
                         break;
                     case Property.RangeStart:
-                        test.RangeStart = propInput;
+                        test.RangeMin = propInput;
                         break;
                     case Property.RangeEnd:
-                        test.RangeEnd = propInput;
+                        test.RangeMax = propInput;
                         break;
                     case Property.StepFrequency:
                         test.StepFrequency = propInput;
@@ -350,7 +350,7 @@ namespace UnitTests.UWP.UI.Controls
             RangeEnd
         }
 
-        private record TestRecord(double StepFrequency, double Minimum, double RangeStart, double RangeEnd, double Maximum);
+        private record TestRecord(double StepFrequency, double Minimum, double RangeMin, double RangeMax, double Maximum);
 
         private static RangeSelector BuildRangeSelecor(TestRecord input)
             => new()
@@ -358,11 +358,11 @@ namespace UnitTests.UWP.UI.Controls
                 StepFrequency = input.StepFrequency,
                 Minimum = input.Minimum,
                 Maximum = input.Maximum,
-                RangeStart = input.RangeStart,
-                RangeEnd = input.RangeEnd,
+                RangeMin = input.RangeMin,
+                RangeMax = input.RangeMax,
             };
 
         private static TestRecord BuildTestRecord(RangeSelector r)
-            => new(r.StepFrequency, r.Minimum, r.RangeStart, r.RangeEnd, r.Maximum);
+            => new(r.StepFrequency, r.Minimum, r.RangeMin, r.RangeMax, r.Maximum);
     }
 }
