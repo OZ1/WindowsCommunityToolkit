@@ -56,6 +56,33 @@ public partial class RangeSelector : Control
             typeof(RangeSelector),
             new PropertyMetadata(DefaultStepFrequency));
 
+    public static readonly DependencyProperty ScaleProperty =
+        DependencyProperty.Register(
+            nameof(Scale),
+            typeof(IScale),
+            typeof(RangeSelector),
+            new PropertyMetadata(null, ScaleChangedCallback));
+
+    public static readonly DependencyProperty ScaleTypeProperty =
+        DependencyProperty.Register(
+            nameof(ScaleType),
+            typeof(ScaleType),
+            typeof(RangeSelector),
+            new PropertyMetadata(ScaleType.Linear, ScaleTypeChangedCallback));
+
+    protected static DependencyProperty RegisterRangeProperty(string name, Type ownerType, double defaultValue) =>
+        DependencyProperty.Register(name, typeof(double), ownerType, new(defaultValue, RangeChangedCallback));
+
+    public double GetRange(int thumb)
+    {
+        return (double)GetValue(ThumbsInfo[thumb].RangeProperty);
+    }
+
+    public void SetRange(int thumb, double value)
+    {
+        SetValue(ThumbsInfo[thumb].RangeProperty, value);
+    }
+
     /// <summary>
     /// Gets or sets the absolute minimum value of the range.
     /// </summary>
@@ -116,7 +143,17 @@ public partial class RangeSelector : Control
         set => SetValue(StepFrequencyProperty, value);
     }
 
+    public IScale Scale
     {
+        get => (IScale)GetValue(ScaleProperty);
+        set => SetValue(ScaleProperty, value);
+    }
+
+    public ScaleType ScaleType
+    {
+        get => (ScaleType)GetValue(ScaleTypeProperty);
+        set => SetValue(ScaleTypeProperty, value);
+    }
 
     private static void MinimumChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -228,19 +265,38 @@ public partial class RangeSelector : Control
         rangeSelector.SyncThumbs();
     }
 
+    private static void ScaleChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
+        if (d is not RangeSelector rangeSelector || Equals(e.NewValue, e.OldValue))
         {
             return;
         }
 
+        rangeSelector.ScaleType = e.NewValue switch
         {
+            IScale scale => scale.ScaleType,
+            null => ScaleType.Linear,
+            _ => ScaleType.Custom,
+        };
     }
 
-            {
+    private static void ScaleTypeChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
+        if (d is not RangeSelector rangeSelector || e.NewValue is not ScaleType scale || scale.Equals(e.OldValue))
+        {
+            return;
         }
 
+        switch (scale)
         {
+        case ScaleType.Custom: break;
+        case ScaleType.Linear: rangeSelector.Scale = null; break;
+        case ScaleType.Sine: rangeSelector.Scale = new SineScale();  break;
+        case ScaleType.Circle: rangeSelector.Scale = new CircleScale(); break;
+        case ScaleType.Square: rangeSelector.Scale = new SquareScale(); break;
+        case ScaleType.Root: rangeSelector.Scale = new RootScale(); break;
+        case ScaleType.Power: rangeSelector.Scale = new PowerScale(); break;
+        case ScaleType.Hyperbolic: rangeSelector.Scale = new HyperbolicScale(); break;
         }
     }
 }

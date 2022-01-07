@@ -23,12 +23,14 @@ public partial class RangeSelector : Control
     private double GetPositionFromValue(double value)
     {
         var position = (value - Minimum) / (Maximum - Minimum);
+        Scale?.Convert(ref position);
         return position * DragWidth();
     }
 
     private double GetValueFromPosition(double position)
     {
         var value = position / DragWidth();
+        Scale?.Inverse(ref value);
         return Minimum + (value * (Maximum - Minimum));
     }
 
